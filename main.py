@@ -1,28 +1,46 @@
 import pygame
-from constants import SCREEN_WIDTH, SCREEN_HEIGHT
+from constants import (
+    SCREEN_WIDTH, 
+    SCREEN_HEIGHT,
+    ASTEROID_MAX_RADIUS,
+    ASTEROID_MIN_RADIUS,
+    ASTEROID_KINDS,
+    ASTEROID_SPAWN_RATE
+)
 from player import Player
+from asteroid import Asteroid
+from asteroidfield import AsteroidField
+from circleshape import CircleShape
 
 
 def main():
     pygame.init()
     screen=pygame.display.set_mode([SCREEN_WIDTH, SCREEN_HEIGHT])
     dt = 0
-
+    #creating objects of diff classes
     #the player which is space ship
-    player_ = Player(SCREEN_WIDTH/2, SCREEN_HEIGHT/2) 
-    print(player_)
+    
+    
 
     #groups for multiple instances
     updatable = pygame.sprite.Group()
     drawable = pygame.sprite.Group()
+    asteroids_group =  pygame.sprite.Group()
+
     Player.containers = (updatable, drawable)
+    Asteroid.containers = (updatable, drawable,asteroids_group)
+    AsteroidField.containers = (updatable,)
+
+    player_ = Player(SCREEN_WIDTH/2, SCREEN_HEIGHT/2) 
+    asteroid_field = AsteroidField() 
 
     updatable.add(player_)
     drawable.add(player_)
+    updatable.add(asteroid_field)
     
     clock = pygame.time.Clock()
     while True:
-        for event in pygame.event.get():
+        for  event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return 
         screen.fill((0,0,0)) 
@@ -30,7 +48,11 @@ def main():
             
         for sprite in updatable: 
             sprite.update(dt)
-        
+        for sprite  in asteroids_group:
+            if sprite.check_for_collisions(player_):
+                print("Game over!")
+
+
         for sprite in drawable:
             sprite.draw(screen)
 
