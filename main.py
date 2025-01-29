@@ -1,4 +1,5 @@
 import pygame
+from pygame.display import update
 from constants import (
     SCREEN_WIDTH, 
     SCREEN_HEIGHT,
@@ -10,7 +11,7 @@ from constants import (
 from player import Player
 from asteroid import Asteroid
 from asteroidfield import AsteroidField
-from circleshape import CircleShape
+from circleshape import CircleShape, Shot
 
 
 def main():
@@ -26,10 +27,13 @@ def main():
     updatable = pygame.sprite.Group()
     drawable = pygame.sprite.Group()
     asteroids_group =  pygame.sprite.Group()
+    shots = pygame.sprite.Group()
+
 
     Player.containers = (updatable, drawable)
     Asteroid.containers = (updatable, drawable,asteroids_group)
     AsteroidField.containers = (updatable,)
+    Shot.containers = (updatable, drawable, shots)
 
     player_ = Player(SCREEN_WIDTH/2, SCREEN_HEIGHT/2) 
     asteroid_field = AsteroidField() 
@@ -43,6 +47,10 @@ def main():
         for  event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return 
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_SPACE]:
+            print("Print space bar")
+            player_.shoot()
         screen.fill((0,0,0)) 
         #update all objects
             
@@ -51,10 +59,10 @@ def main():
         for sprite  in asteroids_group:
             if sprite.check_for_collisions(player_):
                 print("Game over!")
-
-
         for sprite in drawable:
             sprite.draw(screen)
+        
+
 
         #tick also return the time between different frames
         time_diff_between_frames = clock.tick(60)
