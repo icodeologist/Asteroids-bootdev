@@ -1,3 +1,4 @@
+import sys
 import pygame
 from pygame.display import update
 from constants import (
@@ -49,8 +50,9 @@ def main():
                 return 
         keys = pygame.key.get_pressed()
         if keys[pygame.K_SPACE]:
-            print("Print space bar")
-            player_.shoot()
+            shot = player_.shoot()
+            if shot:
+                shots.add(shot)
         screen.fill((0,0,0)) 
         #update all objects
             
@@ -59,11 +61,16 @@ def main():
         for sprite  in asteroids_group:
             if sprite.check_for_collisions(player_):
                 print("Game over!")
+                sys.exit()
+            for bullet in shots:
+                if sprite.check_for_collisions(bullet):
+                    sprite.kill()
+                    bullet.kill()
+                    break
+                    
         for sprite in drawable:
             sprite.draw(screen)
-        
-
-
+            
         #tick also return the time between different frames
         time_diff_between_frames = clock.tick(60)
         dt = time_diff_between_frames/1000

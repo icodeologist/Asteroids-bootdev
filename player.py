@@ -1,6 +1,6 @@
 import pygame
 from circleshape import CircleShape, Shot
-from constants import SHOT_RADIUS,PLAYER_RADIUS, PLAYER_SHOOT_SPEED, PLAYER_TURN_SPEED, PLAYER_SPEED, SHOT_RADIUS
+from constants import SHOT_RADIUS,PLAYER_RADIUS, PLAYER_SHOOT_SPEED, PLAYER_TURN_SPEED, PLAYER_SPEED, SHOT_RADIUS, PLAYER_SHOOT_COOLDOWN
 
 class Player(CircleShape):
     def __init__(self, x, y):
@@ -8,7 +8,9 @@ class Player(CircleShape):
         self.x = x
         self.y = y
         self.rotation = 0
+        self.timer = 0
 
+    
     #traingle 
     def triangle(self):
         forward = pygame.Vector2(0, 1).rotate(self.rotation)
@@ -27,6 +29,9 @@ class Player(CircleShape):
         self.rotation = PLAYER_TURN_SPEED * dt
     
     def update(self, dt):
+        if self.timer > 0:
+            self.timer -= dt
+
         keys = pygame.key.get_pressed()
 
         if keys[pygame.K_a]:
@@ -49,15 +54,15 @@ class Player(CircleShape):
         self.position += forward * PLAYER_SPEED * dt
 
     def shoot(self):
-        shot = Shot(self.x, self.y , SHOT_RADIUS)
-        direction = pygame.Vector2(0,1)
-        direction = direction.rotate(self.rotation)
-        direction *= PLAYER_SHOOT_SPEED
-        shot.velocity = direction
-    def something(self):
-        print("what the fuck is this I want my neovim congid This is too harsh on my eyes FUCKKKKK")
-
-
+        if self.timer <= 0:
+            shot = Shot(self.position.x, self.position.y , SHOT_RADIUS)
+            direction = pygame.Vector2(0,1)
+            direction = direction.rotate(self.rotation)
+            direction *= PLAYER_SHOOT_SPEED
+            shot.velocity = direction
+            self.timer = PLAYER_SHOOT_COOLDOWN
+            return shot
+        return None
 
 
                              
