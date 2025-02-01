@@ -37,5 +37,3 @@ class Asteroid(CircleShape):
         # Set their velocities (scaled up by 1.2)
         asteroid1.velocity = velocity1 * 1.2
         asteroid2.velocity = velocity2 * 1.2
-
-         
