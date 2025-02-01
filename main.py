@@ -64,7 +64,7 @@ def main():
                 sys.exit()
             for bullet in shots:
                 if sprite.check_for_collisions(bullet):
-                    sprite.kill()
+                    sprite.spilt()
                     bullet.kill()
                     break
                     
